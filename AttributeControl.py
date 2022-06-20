@@ -1,6 +1,5 @@
 ''' Контроль присваивания и извлечения атрибутов '''
-
-
+import datetime
 class Human:
     '''
         Первый способ - через перехват всех атрибутов - методы __getattribute__ и __setattr__
@@ -23,26 +22,61 @@ class Human:
 
 class Human2:
     '''
-        Второй способ - через функцию(декоратор) property()
+        Второй способ - через функцию(декоратор) property(). _age - вычисляемый атрибут
     '''
 
-    def __init__(self, name, age):
+    def __init__(self, name, birthday):
         self._name = name
-        self._age = age
+        self.birthday = birthday
     def GetName(self):
         print('Property Get Name Trace')
         return self._name
+
+    def SetName(self, newname):
+        print('Property Set Name Trace')
+        self._name = newname
+
     def GetAge(self):
         print('Property Get Age Trace')
-        return self._age
-    def SetAge(self, newage):
-        print('Property Set Age Trace')
-        self._age = newage
-    name = property(GetName, None, None, None)
-    age = property(GetAge, SetAge, None, None)
+        return int(datetime.datetime.now().year) - int(self.birthday.split('.')[2])
 
-Andrey = Human2('Andrey', 33)
-print(Andrey.name)
-print(Andrey.age)
-Andrey.age = 43
+    name = property(GetName, SetName, None)
+    age = property(GetAge, None, None)
+
+class Human3:
+    '''
+        Функционал с исползованием декораторов @property
+    '''
+    def __init__(self, name, birthday):
+        self._name = name
+        self.birthday = birthday
+    @property
+    def name(self):
+        print('Property Get Name Trace')
+        return self._name
+    @name.setter #setter - это метод свойства
+    def name(self, newname):
+        print('Property Set Name Trace')
+        self._name = newname
+    @property
+    def age(self):
+        print('Property Get Age Trace')
+        return int(datetime.datetime.now().year) - int(self.birthday.split('.')[2])
+
+class DescAttributesAge:
+    def __get__(self, instance, owner):
+        return int(datetime.datetime.now().year) - int(instance.birthday.split('.')[2])
+class Human4:
+    '''
+        Функционал с использованием дескрипторов
+    '''
+    age = DescAttributesAge() # Вычисляемый дескриптором атрибут
+    def __init__(self, name, birthday):
+        self._name = name
+        self.birthday = birthday
+
+
+
+Andrey = Human4('Andrey', '30.01.1989')
+print(Andrey._name)
 print(Andrey.age)
