@@ -2,12 +2,12 @@ def decorator(func): # декоратор ожидает функцию без �
     '''Самая базовая декорирующая функция'''
     def inner(*args, **kwargs):
         print('Before code')
-        func(*args, **kwargs)
+        print(func(*args, **kwargs))
         print('After code')
     return inner
 
 def sq(a, b):
-    print(a ** b)
+    return a ** b
 
 a = decorator(sq)
 '''

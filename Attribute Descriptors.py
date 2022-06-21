@@ -39,5 +39,6 @@ class Human:
 
 
 Andrey = Human('Andrey', '30.01.1989')
-Andrey.name = 123
+Andrey.age = 123
+print(Andrey.age)
 print(Andrey.name)
