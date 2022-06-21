@@ -1,16 +1,12 @@
-def counter(func):
-    counter = 0
-    def inner(*args, **kwargs):
-        nonlocal counter
-        print(counter, 'number of call')
-        counter += 1
-        return func(*args, **kwargs)
+def closure(x):
+    def inner(y):
+        return x+y
     return inner
-
-def sq(a):
-    print(a ** 2)
-sq = counter(sq)
-
-sq(2)
-sq(5)
-
+a = closure(5)
+'''
+    После выполнения имя a ссылается на обьект функции inner, которая
+    в свою очередь ожидает позиционный аргумент y. Однако, нсмотря на то,
+    что выполнение функции clisure заверешено к функции inner в качестве 
+    состояния прикреплены данные из x и функция inner может их использовать
+'''
+print(a(5))
