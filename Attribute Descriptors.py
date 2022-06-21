@@ -18,7 +18,15 @@ class Descriptor:
         if self.var_name == '_age':
             return int(datetime.datetime.now().year) - int(instance._birthday.split('.')[2])
         return getattr(instance, self.var_name)
-
+    def __set__(self, instance, value):
+        print('Descriptor Set Working')
+        if self.var_name == '_age':
+            print('Age is dynamic Attribute. You can\'t install age manual')
+        if self.var_name == '_name':
+            if not isinstance(value, str):
+                print('Только строка')
+            else:
+                setattr(instance, self.var_name, value)
 
 class Human:
     age = Descriptor()  # вычисляемый атрибут
@@ -31,4 +39,5 @@ class Human:
 
 
 Andrey = Human('Andrey', '30.01.1989')
-
+Andrey.name = 123
+print(Andrey.name)
