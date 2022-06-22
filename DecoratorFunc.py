@@ -31,3 +31,4 @@ sq = decorator(sq) # аналогично @decorator над объявление
     в области видимости функции decorator
 '''
 sq(2,3)
+
