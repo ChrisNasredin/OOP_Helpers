@@ -30,7 +30,17 @@ def singleton_caps(cls):
     return inner
 
 
-@singleton_caps
+class singleton_as_class:
+    def __init__(self, cls):
+        self.cls = cls
+
+    def __call__(self, *args, **kwargs):
+        if not hasattr(self, 'instance'):
+            self.instance = self.cls(*args, **kwargs)
+        return self.instance
+
+
+@singleton_as_class
 class Human:
     def __init__(self, name):
         self.name = name
@@ -42,3 +52,4 @@ C = Human('c')
 D = Human('d')
 print(A, B, C, D, sep='\n')
 print(A is B is C is D)
+print(hasattr(D, 'name'))
