@@ -1,12 +1,13 @@
 # Написать пример декорирования класса функцией
 import datetime
 def DecoHuman(cls):
-    class DescAge:
-        def __init__(self, attr):
-            self.attrib = attr
-        def __get__(self, instance, owner):
-            return int(datetime.datetime.now().year) - int(instance.birthday.split('.')[2])
     class AdvHuman:
+        class DescAge:
+            def __init__(self, attr):
+                self.attrib = attr
+
+            def __get__(self, instance, owner):
+                return int(datetime.datetime.now().year) - int(instance.birthday.split('.')[2])
         age = DescAge('age')
         def __init__(self, *args, **kwargs):
             self.InstHuman = cls(*args, **kwargs)
