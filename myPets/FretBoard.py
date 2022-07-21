@@ -16,12 +16,13 @@ class Fretboard:
     @staticmethod
     def RandomNote(strings=5, frets=11):
         if Fretboard.REPEAT_DCT:
-            if random.randint(0,1):
+            if random.randint(0, 1):
                 return (random.randint(0, strings), random.randint(0, frets))
             else:
                 return random.choices(list(Fretboard.REPEAT_DCT.keys()))[0]
         else:
             return (random.randint(0, strings), random.randint(0, frets))
+
     @staticmethod
     def show_fretboard(fretboard):
         result = ''
@@ -52,7 +53,7 @@ class Fretboard:
 
     def question(self):
         ans_note = self.__class__.RandomNote()
-        #print(ans_note)
+        # print(ans_note)
         self.__class__.EMPTY_FRETBOARD[ans_note[0]][ans_note[1]] = '?'
         print(self.__class__.show_fretboard(self.__class__.EMPTY_FRETBOARD))
         Answer = input('Input Note ')
@@ -68,5 +69,3 @@ class Fretboard:
 MyTest = Fretboard()
 while True:
     MyTest.question()
-    print(MyTest.REPEAT_DCT)
-
