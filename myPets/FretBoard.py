@@ -3,26 +3,35 @@ import random
 
 
 class Fretboard:
-    FRETBOARD = [
-        ['F', 'F#', 'G', 'G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E'],
-        ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'],
-        ['G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G'],
-        ['D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B', 'C', 'C#', 'D'],
-        ['A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A'],
-        ['F', 'F#', 'G', 'G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E']
-    ]
-    EMPTY_FRETBOARD = [['' for i in range(12)] for i in range(6)]
-    REPEAT_DCT = {}
+    def __init__(self, exam=False):
+        self.FRETBOARD = [
+            ['F', 'F#', 'G', 'G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E'],
+            ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'],
+            ['G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G'],
+            ['D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B', 'C', 'C#', 'D'],
+            ['A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A'],
+            ['F', 'F#', 'G', 'G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E']
+        ]
+        self.EMPTY_FRETBOARD = [['' for i in range(12)] for i in range(6)]
+        self.REPEAT_DCT = {}
+        self.EXAM_DCT = {}
+        self.exam = exam
 
-    @staticmethod
-    def RandomNote(strings=5, frets=11):
-        if Fretboard.REPEAT_DCT:
-            if random.randint(0, 1):
-                return (random.randint(0, strings), random.randint(0, frets))
-            else:
-                return random.choices(list(Fretboard.REPEAT_DCT.keys()))[0]
+    def RandomNote(self, strings=5, frets=11):
+        if self.exam:
+            print('Exam', self.EXAM_DCT)
+            exam_note = (random.randint(0, strings), random.randint(0, frets))
+            while exam_note in self.EXAM_DCT:
+                exam_note = (random.randint(0, strings), random.randint(0, frets))
+            return exam_note
         else:
-            return (random.randint(0, strings), random.randint(0, frets))
+            if self.REPEAT_DCT:
+                if random.randint(0, 1):
+                    return (random.randint(0, strings), random.randint(0, frets))
+                else:
+                    return random.choices(list(self.REPEAT_DCT.keys()))[0]
+            else:
+                return (random.randint(0, strings), random.randint(0, frets))
 
     @staticmethod
     def show_fretboard(fretboard):
@@ -38,35 +47,49 @@ class Fretboard:
         result += '\n'
         return result
 
-    @classmethod
-    def change_repeat_dct(cls, action, note_coord):
+    def change_repeat_dct(self, action, note_coord):
         if action == 'add':
-            if note_coord not in cls.REPEAT_DCT:
-                cls.REPEAT_DCT[note_coord] = 1
+            if note_coord not in self.REPEAT_DCT:
+                self.REPEAT_DCT[note_coord] = 1
             else:
-                cls.REPEAT_DCT[note_coord] += 1
+                self.REPEAT_DCT[note_coord] += 1
         elif action == 'delete':
-            if note_coord in cls.REPEAT_DCT:
-                if cls.REPEAT_DCT[note_coord] == 1:
-                    del cls.REPEAT_DCT[note_coord]
+            if note_coord in self.REPEAT_DCT:
+                if self.REPEAT_DCT[note_coord] == 1:
+                    del self.REPEAT_DCT[note_coord]
                 else:
-                    cls.REPEAT_DCT[note_coord] -= 1
+                    self.REPEAT_DCT[note_coord] -= 1
 
     def question(self):
-        ans_note = self.__class__.RandomNote()
-        # print(ans_note)
-        self.__class__.EMPTY_FRETBOARD[ans_note[0]][ans_note[1]] = '?'
-        print(self.__class__.show_fretboard(self.__class__.EMPTY_FRETBOARD))
+        if self.exam:
+            if len(self.EXAM_DCT) >= 72:
+                print('Mistakes: ', sum([1 for k, v in self.EXAM_DCT.items() if not v]))
+                return
+        ans_note = self.RandomNote()
+        self.EMPTY_FRETBOARD[ans_note[0]][ans_note[1]] = '?'
+        print(self.__class__.show_fretboard(self.EMPTY_FRETBOARD))
         Answer = input('Input Note ')
-        if Answer == self.__class__.FRETBOARD[ans_note[0]][ans_note[1]]:
+        if Answer == self.FRETBOARD[ans_note[0]][ans_note[1]]:
             print('Bingo!')
-            self.change_repeat_dct('delete', ans_note)
+            if self.exam:
+                self.EXAM_DCT[ans_note] = True
+            else:
+                self.change_repeat_dct('delete', ans_note)
         else:
             print('Nope')
-            self.change_repeat_dct('add', ans_note)
-        self.__class__.EMPTY_FRETBOARD[ans_note[0]][ans_note[1]] = '-'
+            if self.exam:
+                self.EXAM_DCT[ans_note] = False
+            else:
+                self.change_repeat_dct('add', ans_note)
+        self.EMPTY_FRETBOARD[ans_note[0]][ans_note[1]] = '-'
+    def start_game(self):
+        if self.exam:
+            for _ in range(73):
+                self.question()
+        else:
+            while True:
+                self.question()
 
 
-MyTest = Fretboard()
-while True:
-    MyTest.question()
+MyTest = Fretboard(exam=True)
+MyTest.start_game()
